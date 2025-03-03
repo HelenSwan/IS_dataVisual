@@ -8,9 +8,8 @@ from sklearn.cluster import AgglomerativeClustering
 from sklearn.svm import SVC
 from sklearn.metrics import classification_report
 from sklearn.model_selection import train_test_split
-import tensorflow as tf
 from tensorflow.keras.models import Sequential
-from keras.layers import LSTM, Dense
+from tensorflow.keras.layers import LSTM, Dense
 
 st.title("🎈 Machine Learning Models")
 st.write(
