@@ -8,6 +8,7 @@ from sklearn.cluster import AgglomerativeClustering
 from sklearn.svm import SVC
 from sklearn.metrics import classification_report
 from sklearn.model_selection import train_test_split
+from tensorflow import keras
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense
 
