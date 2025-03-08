@@ -8,10 +8,10 @@ from sklearn.cluster import AgglomerativeClustering
 from sklearn.svm import SVC
 from sklearn.metrics import classification_report
 from sklearn.model_selection import train_test_split
-from tensorflow.python.keras.models import Sequential
-from tensorflow.python.keras.layers import LSTM, Dense
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import LSTM, Dense
 
-st.title("Machine Learning Models")
+st.title("💻 Machine Learning Models")
 st.write(
     "Let's start exploring!"
 )
@@ -22,7 +22,7 @@ data2 = pd.read_csv("dataset/Environment_Temperature_change_E_All_Data_NOFLAG.cs
 data.fillna(-1, inplace=True)
 data2.fillna(0, inplace=True)
 st.header("About Datasets")
-st.text("Example The Most Dangerous Countries For Women data in dataset")
+st.text("🌐Example The Most Dangerous Countries For Women data in dataset")
 st.write(data.head())
 st.markdown("""
 Download dataset from [Most Dangerous Countries For Women](https://www.kaggle.com/datasets/arpitsinghaiml/most-dangerous-countries-for-women-2024)
@@ -40,7 +40,7 @@ Download dataset from [Most Dangerous Countries For Women](https://www.kaggle.co
 - **MostDangerousCountriesForWomen_WDIGenderInequality_2019**: Women's Danger Index score for gender inequality in 2019.
 - **MostDangerousCountriesForWomen_WDIAttitudesTowardViolence_2019**: Women's Danger Index score for attitudes toward violence in 2019.
 """)
-st.text("Example Temperature Change data in dataset")
+st.text("🚨Example Temperature Change data in dataset")
 st.write(data2.head())
 st.markdown("""
 Download dataset from [Temperature Change Dataset](https://www.kaggle.com/datasets/sevgisarac/temperature-change)
@@ -56,9 +56,9 @@ Download dataset from [Temperature Change Dataset](https://www.kaggle.com/datase
 """)
 st.sidebar.title("Navigation")
 page = st.sidebar.radio("Choose a page", ["About Machine Learning", "About Neural Network", "Machine Learning Demo", "Neural Network Demo"])
-if page  == "About Machine Learning":
+if page  == "📜About Machine Learning":
 #การเตรียมข้อมูล ทฤษฎีของอัลกอริทึมที่พัฒนา และขั้นตอนการพัฒนาโมเดล
-    st.title("About Machine Learning")
+    st.title("📜About Machine Learning")
     st.subheader("Development Plan")
     st.text("ในการทำโมเดลนี้ใช้ 2 Datasets โดย Datasetที่ 1 เกี่ยวกับความเป็นอันตรายและความปลอดภัยของผู้หญิงในประเทศต่าง ๆ และ Datasetที่ 2 เกี่ยวกับการเปลี่ยนแปลงอุณหภูมิของประเทศต่าง ๆ ทั่วโลกปี 1961-2019")
     st.markdown(""" 
@@ -99,9 +99,9 @@ if page  == "About Machine Learning":
         * กราฟใช้ Scatter plot เพื่อโชว์ผลการทำนายของModel ข้อมูลการทำนายจาก SVM จะแสดงเป็นเครื่องหมาย(X) สี blue สำหรับประเทศที่ทำนายโดย SVM ว่าอยู่กลุ่มไหน 
         * กราฟจะมี แกน X เป็น Women’sDangerIndexGenderInequality_2019 และแกน Y เป็น Women’sDangerIndexWDI_TotalScore_2019 และสีที่ใช้ในกราฟจะแบ่งเป็นตามแต่ละกลุ่ม 3 กลุ่มเหมือนกับของ KMeans Clustering
         """)
-elif page  == "About Neural Network":
+elif page  == "📜About Neural Network":
 #การเตรียมข้อมูล ทฤษฎีของอัลกอริทึมที่พัฒนา และขั้นตอนการพัฒนาโมเดล
-    st.title("About Neural Network")
+    st.title("📜About Neural Network")
     st.subheader("Development Plan")
     st.text("ในการทำโมเดลนี้ใช้ 2 Datasets โดย Datasetที่ 1 เกี่ยวกับความเป็นอันตรายและความปลอดภัยของผู้หญิงในประเทศต่าง ๆ และ Datasetที่ 2 เกี่ยวกับการเปลี่ยนแปลงอุณหภูมิของประเทศต่าง ๆ ทั่วโลกปี 1961-2019")
     st.markdown(""" 
@@ -130,8 +130,8 @@ elif page  == "About Neural Network":
         * Model ถูกฝึกในช่วงจำนวนรอบ 10 epoch บนชุดข้อมูลทั้งหมด ใช้ข้อมูลปีที่ผ่านมาเพื่อทำนายอุณหภูมิในอนาต (ปี 2020-2029) และใช้จำนวนตัวอย่างข้อมูลที่ใช้ในการฝึกแต่ละรอบ ข้อมูล 32 ตัวอย่าง (batch)
         * ใช้โมเดลที่ฝึกเสร็จแล้วเพื่อทำนายการเปลี่ยนแปลงอุณหภูมิในอนาคต (สำหรับปี 2020 ถึง 2029) ใช้ Forecasting Future Data โดยใช้ข้อมูลในอดีต Historical Data เพื่อทำนายค่าที่จะเกิดขึ้นในอนาคต โดยใช้ข้อมูล TemperatureChangeในปี 1961-2019 เพื่ออัปเดตข้อมูลการทำนายในแต่ละปีตามลำดับ หรือก็คือใช้ข้อมูลชุดสุดท้ายของชุดฝึก(last_sequence) เพื่อทำนายค่าTemperature Changeในปีต่อไป แล้วใช้ค่าที่ทำนายได้ในแต่ละปีในการอัปเดตข้อมูลลำดับถัดไป เพื่อทำนายในปีต่อไป แล้วก็ย้อนปรับขนาดเพื่อให้ได้อุณหภูมิจริง ๆ 
         """)
-elif page == "Machine Learning Demo":
-    st.title("Machine Learning Demo")
+elif page == "📊Machine Learning Demo":
+    st.title("📊Machine Learning Demo")
     data = pd.read_csv("dataset/most-dangerous-countries-for-women-2024.csv", encoding='ISO-8859-1') 
 
     # Data cleaning
@@ -289,8 +289,8 @@ elif page == "Machine Learning Demo":
     ax.set_title('SVM Predictions for Women Gender Inequality 2019')
     st.pyplot(fig)
 
-elif page == "Neural Network Demo":
-    st.title("Neural Network Demo")
+elif page == "📊Neural Network Demo":
+    st.title("📊Neural Network Demo")
 #Neural Network(LSTM-tensorflow/keras)
 # เลือกเตรียมข้อมูลที่จะใช้
     temperature_data_thailand = data2[['Area', 'Y1961', 'Y1964', 'Y1967', 'Y1970', 'Y1973', 'Y1976', 'Y1979', 'Y1982', 'Y1985', 'Y1988', 'Y1991', 'Y1994', 'Y1997', 'Y2000', 'Y2003', 'Y2006', 'Y2009', 'Y2012', 'Y2015', 'Y2018', 'Y2019', 'Element']]
@@ -390,6 +390,3 @@ elif page == "Neural Network Demo":
     ax.grid(True)
     ax.legend()
     st.pyplot(fig)
-
-
-
