@@ -8,8 +8,8 @@ from sklearn.cluster import AgglomerativeClustering
 from sklearn.svm import SVC
 from sklearn.metrics import classification_report
 from sklearn.model_selection import train_test_split
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import LSTM, Dense
+from tensorflow.keras.models import Sequential # type: ignore
+from tensorflow.keras.layers import LSTM, Dense # type: ignore
 
 st.title("💻 Machine Learning Models")
 st.write(
@@ -56,7 +56,7 @@ Download dataset from [Temperature Change Dataset](https://www.kaggle.com/datase
 """)
 st.sidebar.title("Navigation")
 page = st.sidebar.radio("Choose a page", ["About Machine Learning", "About Neural Network", "Machine Learning Demo", "Neural Network Demo"])
-if page  == "📜About Machine Learning":
+if page  == "About Machine Learning":
 #การเตรียมข้อมูล ทฤษฎีของอัลกอริทึมที่พัฒนา และขั้นตอนการพัฒนาโมเดล
     st.title("📜About Machine Learning")
     st.subheader("Development Plan")
@@ -99,7 +99,7 @@ if page  == "📜About Machine Learning":
         * กราฟใช้ Scatter plot เพื่อโชว์ผลการทำนายของModel ข้อมูลการทำนายจาก SVM จะแสดงเป็นเครื่องหมาย(X) สี blue สำหรับประเทศที่ทำนายโดย SVM ว่าอยู่กลุ่มไหน 
         * กราฟจะมี แกน X เป็น Women’sDangerIndexGenderInequality_2019 และแกน Y เป็น Women’sDangerIndexWDI_TotalScore_2019 และสีที่ใช้ในกราฟจะแบ่งเป็นตามแต่ละกลุ่ม 3 กลุ่มเหมือนกับของ KMeans Clustering
         """)
-elif page  == "📜About Neural Network":
+elif page  == "About Neural Network":
 #การเตรียมข้อมูล ทฤษฎีของอัลกอริทึมที่พัฒนา และขั้นตอนการพัฒนาโมเดล
     st.title("📜About Neural Network")
     st.subheader("Development Plan")
@@ -130,7 +130,7 @@ elif page  == "📜About Neural Network":
         * Model ถูกฝึกในช่วงจำนวนรอบ 10 epoch บนชุดข้อมูลทั้งหมด ใช้ข้อมูลปีที่ผ่านมาเพื่อทำนายอุณหภูมิในอนาต (ปี 2020-2029) และใช้จำนวนตัวอย่างข้อมูลที่ใช้ในการฝึกแต่ละรอบ ข้อมูล 32 ตัวอย่าง (batch)
         * ใช้โมเดลที่ฝึกเสร็จแล้วเพื่อทำนายการเปลี่ยนแปลงอุณหภูมิในอนาคต (สำหรับปี 2020 ถึง 2029) ใช้ Forecasting Future Data โดยใช้ข้อมูลในอดีต Historical Data เพื่อทำนายค่าที่จะเกิดขึ้นในอนาคต โดยใช้ข้อมูล TemperatureChangeในปี 1961-2019 เพื่ออัปเดตข้อมูลการทำนายในแต่ละปีตามลำดับ หรือก็คือใช้ข้อมูลชุดสุดท้ายของชุดฝึก(last_sequence) เพื่อทำนายค่าTemperature Changeในปีต่อไป แล้วใช้ค่าที่ทำนายได้ในแต่ละปีในการอัปเดตข้อมูลลำดับถัดไป เพื่อทำนายในปีต่อไป แล้วก็ย้อนปรับขนาดเพื่อให้ได้อุณหภูมิจริง ๆ 
         """)
-elif page == "📊Machine Learning Demo":
+elif page == "Machine Learning Demo":
     st.title("📊Machine Learning Demo")
     data = pd.read_csv("dataset/most-dangerous-countries-for-women-2024.csv", encoding='ISO-8859-1') 
 
@@ -289,7 +289,7 @@ elif page == "📊Machine Learning Demo":
     ax.set_title('SVM Predictions for Women Gender Inequality 2019')
     st.pyplot(fig)
 
-elif page == "📊Neural Network Demo":
+elif page == "Neural Network Demo":
     st.title("📊Neural Network Demo")
 #Neural Network(LSTM-tensorflow/keras)
 # เลือกเตรียมข้อมูลที่จะใช้
