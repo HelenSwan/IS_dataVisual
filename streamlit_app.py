@@ -1,6 +1,8 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
+import joblib
+import train_model
 import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
@@ -10,8 +12,14 @@ from sklearn.metrics import classification_report
 from sklearn.model_selection import train_test_split
 import tensorflow as tf
 Sequential = tf.keras.models.Sequential
+load_model = tf.keras.models.load_model
 LSTM = tf.keras.layers.LSTM
 Dense = tf.keras.layers.Dense
+
+kmeans = joblib.load('kmeans_model.pkl')
+agg_clustering_model = joblib.load('kmeans_model.pkl')
+svm = joblib.load('svm_model.pkl')
+model = load_model('lstm_model.h5')
 
 st.title("💻 Machine Learning Models")
 st.write(
@@ -58,6 +66,7 @@ Download dataset from [Temperature Change Dataset](https://www.kaggle.com/datase
 """)
 st.sidebar.title("Navigation")
 page = st.sidebar.radio("Choose a page", ["About Machine Learning", "About Neural Network", "Machine Learning Demo", "Neural Network Demo"])
+
 if page  == "About Machine Learning":
 #การเตรียมข้อมูล ทฤษฎีของอัลกอริทึมที่พัฒนา และขั้นตอนการพัฒนาโมเดล
     st.title("📜About Machine Learning")
@@ -101,6 +110,8 @@ if page  == "About Machine Learning":
         * กราฟใช้ Scatter plot เพื่อโชว์ผลการทำนายของModel ข้อมูลการทำนายจาก SVM จะแสดงเป็นเครื่องหมาย(X) สี blue สำหรับประเทศที่ทำนายโดย SVM ว่าอยู่กลุ่มไหน 
         * กราฟจะมี แกน X เป็น Women’sDangerIndexGenderInequality_2019 และแกน Y เป็น Women’sDangerIndexWDI_TotalScore_2019 และสีที่ใช้ในกราฟจะแบ่งเป็นตามแต่ละกลุ่ม 3 กลุ่มเหมือนกับของ KMeans Clustering
         """)
+
+
 elif page  == "About Neural Network":
 #การเตรียมข้อมูล ทฤษฎีของอัลกอริทึมที่พัฒนา และขั้นตอนการพัฒนาโมเดล
     st.title("📜About Neural Network")
@@ -132,6 +143,7 @@ elif page  == "About Neural Network":
         * Model ถูกฝึกในช่วงจำนวนรอบ 10 epoch บนชุดข้อมูลทั้งหมด ใช้ข้อมูลปีที่ผ่านมาเพื่อทำนายอุณหภูมิในอนาต (ปี 2020-2029) และใช้จำนวนตัวอย่างข้อมูลที่ใช้ในการฝึกแต่ละรอบ ข้อมูล 32 ตัวอย่าง (batch)
         * ใช้โมเดลที่ฝึกเสร็จแล้วเพื่อทำนายการเปลี่ยนแปลงอุณหภูมิในอนาคต (สำหรับปี 2020 ถึง 2029) ใช้ Forecasting Future Data โดยใช้ข้อมูลในอดีต Historical Data เพื่อทำนายค่าที่จะเกิดขึ้นในอนาคต โดยใช้ข้อมูล TemperatureChangeในปี 1961-2019 เพื่ออัปเดตข้อมูลการทำนายในแต่ละปีตามลำดับ หรือก็คือใช้ข้อมูลชุดสุดท้ายของชุดฝึก(last_sequence) เพื่อทำนายค่าTemperature Changeในปีต่อไป แล้วใช้ค่าที่ทำนายได้ในแต่ละปีในการอัปเดตข้อมูลลำดับถัดไป เพื่อทำนายในปีต่อไป แล้วก็ย้อนปรับขนาดเพื่อให้ได้อุณหภูมิจริง ๆ 
         """)
+
 elif page == "Machine Learning Demo":
     st.title("📊Machine Learning Demo")
     data = pd.read_csv("dataset/most-dangerous-countries-for-women-2024.csv", encoding='ISO-8859-1') 
@@ -212,8 +224,7 @@ elif page == "Machine Learning Demo":
     st.pyplot(fig)
 
 # Agglomerative Clustering
-    agg_clust = AgglomerativeClustering(n_clusters=3)
-    used_data['Agglomerative_Cluster'] = agg_clust.fit_predict(X_scaled)  
+    used_data['Agglomerative_Cluster'] = agg_clustering_model.predict(X_scaled)  
     cluster_labels_agg = {0: 'Average Safety for Women', 1: 'Most Safe for Women', 2: 'Least Safe for Women'}
     used_data['Agglomerative_Cluster_Label'] = used_data['Agglomerative_Cluster'].map(cluster_labels_agg)
     st.subheader("Agglomerative Clustering")
@@ -263,8 +274,6 @@ elif page == "Machine Learning Demo":
     X_train_scaled = scaler.fit_transform(X_train)
     X_test_scaled = scaler.transform(X_test)
 # ใช้SVC และเก็บผลการทำนาย
-    svm = SVC(random_state=42)
-    svm.fit(X_train_scaled, y_train)
     y_pred_svm = svm.predict(X_test_scaled)
 #แสดง reportเกี่ยวกับ Recall, F1-Score,...
     st.write("SVM Classification Report")
@@ -331,16 +340,6 @@ elif page == "Neural Network Demo":
     X, y = create_dataset(dataset, time_step)
 # ปรับแบบข้อมูล X ให้เหมาะกับตอนที่จะป้อนข้อมูลเข้า LSTM แล้ว X มีรูปแบบ[samples, time steps, features]
     X = X.reshape(X.shape[0], X.shape[1], 1)
-
-    model = Sequential()
-    model.add(LSTM(units=90, return_sequences=True, input_shape=(X.shape[1], 1)))
-    model.add(LSTM(units=90, return_sequences=False))
-    model.add(Dense(units=1)) 
-
-# Compile
-    model.compile(optimizer='adam', loss='mean_squared_error')
-# ฝึก
-    model.fit(X, y, epochs=10, batch_size=32)
 
 # ทำนายไปอีก 10 ปี
     future_years = np.arange(2020, 2030) 
